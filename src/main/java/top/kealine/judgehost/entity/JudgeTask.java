@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JudgeTask {
     private long solutionId;
@@ -23,6 +24,13 @@ public class JudgeTask {
         this.timeLimit = data.getInteger("timeLimit");
         this.memoryLimit = data.getInteger("memoryLimit");
         this.lang = data.getInteger("lang");
+    }
+
+    public List<CaseTask> toCaseTask() {
+        return testcaseList
+                .stream()
+                .map(testcaseId -> new CaseTask(solutionId, testcaseId, code, problemId, timeLimit, memoryLimit, lang))
+                .collect(Collectors.toList());
     }
 
     public long getSolutionId() {

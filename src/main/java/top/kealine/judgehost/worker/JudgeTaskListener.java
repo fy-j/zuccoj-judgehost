@@ -28,7 +28,7 @@ public class JudgeTaskListener implements Runnable{
     public void begin() {
         System.out.println("[JudgeTaskListener.begin] Begin to listen task");
         while (true) {
-            JudgePreparer.prepare(new JudgeTask(listen()));
+            MainJudger.runJudgeTask(new JudgeTask(listen()));
         }
     }
 
