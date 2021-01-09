@@ -18,7 +18,7 @@ public class TestcaseDownloader {
                 "input", isInput,
                 "md5", md5
         ));
-        if (response != null && response.isSuccessful()) {
+        if (response != null) {
             if (response.code() == 200) {
                 String filename = testcaseId + (isInput?".in":".ans");
                 InputStream inputStream = Objects.requireNonNull(response.body()).byteStream();
@@ -26,7 +26,10 @@ public class TestcaseDownloader {
                 String fileMd5 = FileUtil.md5Hex(filename);
                 TestcaseLocalTemp.setTestcase(filename, fileMd5);
                 return true;
-            } if (response.code() == 700) {
+            }if (response.code() == 204) {
+                return true;
+            }
+            else if (response.code() == 700) {
                 try {
                     JudgehostInitializer.login();
                     return download(testcaseId, isInput, md5);

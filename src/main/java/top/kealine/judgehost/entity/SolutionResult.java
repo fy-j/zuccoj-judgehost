@@ -46,6 +46,27 @@ public class SolutionResult {
         );
     }
 
+    public static SolutionResult getCompileErrorInstance(long solutionId, CompileResult compileResult) {
+        assert compileResult.isCE();
+        return new SolutionResult(
+                solutionId,
+                JudgeResult.COMPILE_ERROR,
+                0,
+                0,
+                compileResult.getCompilerOutput()
+        );
+    }
+
+    public static SolutionResult getSystemErrorInstance(long solutionId) {
+        return new SolutionResult(
+                solutionId,
+                JudgeResult.SYSTEM_ERROR,
+                0,
+                0,
+                "System Error"
+        );
+    }
+
     public Map<String, Object> toMap() {
         return ImmutableMap.<String, Object>builder()
                 .put("solutionId", solutionId)

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class FileUtil {
 
@@ -56,5 +57,22 @@ public class FileUtil {
             return file.delete();
         }
         return true;
+    }
+
+    public static boolean save(String path, String text) {
+        try {
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(text.getBytes(StandardCharsets.UTF_8));
+            out.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

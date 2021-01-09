@@ -1,9 +1,13 @@
 package top.kealine.judgehost.worker;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import redis.clients.jedis.Jedis;
 import top.kealine.judgehost.util.ConfigUtil;
 
 public class HeartbeatPublisher implements Runnable{
+    private static final Log logger = LogFactory.getLog(HeartbeatPublisher.class);
+
     private static final String JUDGEHOST_HEARTBEAT_KEY;
     private static final Jedis redis;
 
@@ -20,14 +24,17 @@ public class HeartbeatPublisher implements Runnable{
     }
 
     public static void begin() {
-        try {
-            System.out.println("[HeartbeatPublisher.begin] Begin to heartbeat");
-            while(true) {
-                sendHeartbeat();
-                Thread.sleep(10 * 1000);
+        while (true) {
+            logger.info("HeartbeatPublisher is running...");
+            try {
+                while(true) {
+                    sendHeartbeat();
+                    Thread.sleep(10 * 1000);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("Sleep to dead... try again...");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

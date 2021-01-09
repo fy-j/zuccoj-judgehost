@@ -15,6 +15,7 @@ public class JudgeTask {
     private int memoryLimit;
     private int lang;
 
+    public JudgeTask(){}
     public JudgeTask(String json) {
         JSONObject data = JSON.parseObject(json);
         this.solutionId = data.getLong("solutionId");
