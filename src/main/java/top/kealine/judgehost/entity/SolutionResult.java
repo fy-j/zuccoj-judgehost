@@ -19,7 +19,7 @@ public class SolutionResult {
         this.result = result;
         this.memoryUsed = memoryUsed;
         this.timeUsed = timeUsed;
-        this.remark = remark;
+        this.remark = remark.trim();
     }
 
     public static SolutionResult of(List<CaseResult> results) {
@@ -58,12 +58,16 @@ public class SolutionResult {
     }
 
     public static SolutionResult getSystemErrorInstance(long solutionId) {
+        return getSystemErrorInstance(solutionId, "System Error");
+    }
+
+    public static SolutionResult getSystemErrorInstance(long solutionId, String msg) {
         return new SolutionResult(
                 solutionId,
                 JudgeResult.SYSTEM_ERROR,
                 0,
                 0,
-                "System Error"
+                msg
         );
     }
 

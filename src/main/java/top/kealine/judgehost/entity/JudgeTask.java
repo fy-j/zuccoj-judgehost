@@ -14,6 +14,7 @@ public class JudgeTask {
     private int timeLimit;
     private int memoryLimit;
     private int lang;
+    private String spj;
 
     public JudgeTask(){}
     public JudgeTask(String json) {
@@ -25,12 +26,13 @@ public class JudgeTask {
         this.timeLimit = data.getInteger("timeLimit");
         this.memoryLimit = data.getInteger("memoryLimit");
         this.lang = data.getInteger("lang");
+        this.spj = data.getString("spj");
     }
 
     public List<CaseTask> toCaseTask() {
         return testcaseList
                 .stream()
-                .map(testcaseId -> new CaseTask(solutionId, testcaseId, code, problemId, timeLimit, memoryLimit, lang))
+                .map(testcaseId -> new CaseTask(solutionId, testcaseId, code, problemId, timeLimit, memoryLimit, lang, spj!=null))
                 .collect(Collectors.toList());
     }
 
@@ -88,5 +90,17 @@ public class JudgeTask {
 
     public void setProblemId(int problemId) {
         this.problemId = problemId;
+    }
+
+    public String getSpj() {
+        return spj;
+    }
+
+    public void setSpj(String spj) {
+        this.spj = spj;
+    }
+
+    public boolean isSpj() {
+        return this.spj != null;
     }
 }

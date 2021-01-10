@@ -44,6 +44,9 @@ public class MainJudger implements Runnable {
     private static void copyCompiler(File target) throws IOException {
         logger.info(String.format("Copy Compiler to %s", target.getPath()));
 
+        if (target.exists()) {
+            return;
+        }
         File compiler = new File(Config.JUDGEHOST_CORE_DIR + "Compiler");
         Files.copy(compiler.toPath(), target.toPath());
     }
@@ -55,7 +58,7 @@ public class MainJudger implements Runnable {
         Files.copy(core.toPath(), target.toPath());
     }
 
-    private static void prepareEnv(int lang) throws IOException {
+    private static void prepareEnv(int lang, boolean isSpj) throws IOException {
         logger.info("Begin to prepare env.");
         File judgeDir = new File(Config.JUDGEHOST_TEST_DIR + "judge");
         clearOldFiles(judgeDir);
@@ -74,18 +77,37 @@ public class MainJudger implements Runnable {
         File userProgram = new File(Config.JUDGEHOST_TEST_DIR + userProgramName);
         File userProgramTarget = new File(Config.JUDGEHOST_TEST_DIR + "judge/" + userProgramName);
         Files.copy(userProgram.toPath(), userProgramTarget.toPath());
+
+        if (isSpj) {
+            File spj = new File(Config.JUDGEHOST_TEST_DIR + "SpecialJudge");
+            File spjTarget = new File(Config.JUDGEHOST_TEST_DIR + "judge/SpecialJudge");
+            Files.copy(spj.toPath(), spjTarget.toPath());
+        }
     }
 
     private static CaseResult judge(CaseTask task) {
         try {
             logger.info("Begin to run Core...");
-            ProcessBuilder pb = new ProcessBuilder(
-                    Config.JUDGEHOST_TEST_DIR + "judge/Core",
-                    "-l", Integer.toString(task.getLang()),
-                    "-t", Integer.toString(task.getTimeLimit()),
-                    "-m", Integer.toString(task.getMemoryLimit()),
-                    "-d", Config.JUDGEHOST_TEST_DIR + "judge"
-            );
+            ProcessBuilder pb;
+            if (task.isSpj()) {
+                // -s for spj
+                pb = new ProcessBuilder(
+                        Config.JUDGEHOST_TEST_DIR + "judge/Core",
+                        "-l", Integer.toString(task.getLang()),
+                        "-t", Integer.toString(task.getTimeLimit()),
+                        "-m", Integer.toString(task.getMemoryLimit()),
+                        "-d", Config.JUDGEHOST_TEST_DIR + "judge",
+                        "-s"
+                );
+            } else {
+                pb = new ProcessBuilder(
+                        Config.JUDGEHOST_TEST_DIR + "judge/Core",
+                        "-l", Integer.toString(task.getLang()),
+                        "-t", Integer.toString(task.getTimeLimit()),
+                        "-m", Integer.toString(task.getMemoryLimit()),
+                        "-d", Config.JUDGEHOST_TEST_DIR + "judge"
+                );
+            }
             Process pro = pb.start();
             int exitVal = pro.waitFor();
             logger.info(String.format("Core exited, exit code = %s", exitVal));
@@ -99,7 +121,7 @@ public class MainJudger implements Runnable {
 
     private static CaseResult runCaseTask(CaseTask task) {
         try {
-            prepareEnv(task.getLang());
+            prepareEnv(task.getLang(), task.isSpj());
             TestcasePreparer.prepareTestcase(task.getTestcaseId(), Config.JUDGEHOST_TEST_DIR + "judge/");
             return judge(task);
         } catch (Exception e) {
@@ -108,17 +130,14 @@ public class MainJudger implements Runnable {
         }
     }
 
-    private static void releaseUserCode(String code, int lang) {
-        logger.info("Release user's code");
+    private static void releaseCode(String code, int lang) {
+        logger.info("Release code...");
 
         FileUtil.save(Config.JUDGEHOST_TEST_DIR + "Main" + SupportedLanguage.getLangSuffix(lang), code);
     }
 
-    public static CompileResult compileUserCode(File testRoot, String code, int lang) {
-        logger.info("Begin to compile user's code...");
-
-        clearOldFiles(testRoot);
-        releaseUserCode(code, lang);
+    public static CompileResult compileCode(File testRoot, String code, int lang) {
+        releaseCode(code, lang);
         try {
             copyCompiler(new File(Config.JUDGEHOST_TEST_DIR + "Compiler"));
 
@@ -141,42 +160,72 @@ public class MainJudger implements Runnable {
         return CompileResult.getCompileResult();
     }
 
+    public static boolean compileSpjCode(File testRoot, String code) {
+        logger.info("Begin to compile spj code...");
+        CompileResult compileResult = compileCode(testRoot, code, SupportedLanguage.CPP);
+        if (compileResult == null || compileResult.isCE()) {
+            return false;
+        }
+        File spj = new File(testRoot.getPath() + "/Main");
+        File spjNewName = new File(testRoot.getPath() + "/SpecialJudge");
+        return spj.renameTo(spjNewName);
+    }
 
-    public static void runJudgeTask(JudgeTask judgeTask) {
-        logger.info(String.format("New task! solutionId = %s", judgeTask.getSolutionId()));
+    public static CompileResult compileUserCode(File testRoot, String code, int lang) {
+        logger.info("Begin to compile user's code...");
+        return compileCode(testRoot, code, lang);
+    }
 
+    public static SolutionResult runJudgeTask(JudgeTask judgeTask) {
         File testRoot = new File(Config.JUDGEHOST_TEST_DIR);
+        clearOldFiles(testRoot);
 
+        //compile spj code
+        if (judgeTask.isSpj()) {
+            if (compileSpjCode(testRoot, judgeTask.getSpj())) {
+                logger.info("Compile spj successfully.");
+            } else {
+                logger.error("Compile spj failed!");
+                return SolutionResult.getSystemErrorInstance(judgeTask.getSolutionId(), "Compile SPJ got error...");
+            }
+        }
+
+        // compile user's code
         CompileResult compileResult = compileUserCode(testRoot, judgeTask.getCode(), judgeTask.getLang());
-        SolutionResult finalResult;
+
+        //SE
         if (compileResult == null) {
             logger.info("Result = System Error.");
-            finalResult = SolutionResult.getSystemErrorInstance(judgeTask.getSolutionId());
-        }else if (compileResult.isCE()) {
-            logger.info("Result = Compile Error.");
-            finalResult = SolutionResult.getCompileErrorInstance(judgeTask.getSolutionId(), compileResult);
-        } else {
-            logger.info("Compile Successful, begin to judge.");
-
-            // Judge
-            List<CaseTask> tasks = judgeTask.toCaseTask();
-            List<CaseResult> results = tasks
-                    .stream()
-                    .map(MainJudger::runCaseTask)
-                    .collect(Collectors.toList());
-            finalResult = SolutionResult.of(results);
-
-            logger.info(String.format("Judge done, solutionId = %s, final result is %s", finalResult.getSolutionId(), finalResult.getResult()));
+            return SolutionResult.getSystemErrorInstance(judgeTask.getSolutionId(), "Something wrong in Compiler...");
         }
+
+        // CE
+        if (compileResult.isCE()) {
+            logger.info("Result = Compile Error.");
+            return SolutionResult.getCompileErrorInstance(judgeTask.getSolutionId(), compileResult);
+        }
+
+        logger.info("Compile Successfully, begin to judge.");
+
+        // Judge
+        List<CaseTask> tasks = judgeTask.toCaseTask();
+        List<CaseResult> results = tasks
+                .stream()
+                .map(MainJudger::runCaseTask)
+                .collect(Collectors.toList());
+        return SolutionResult.of(results);
+    }
+
+    @Override
+    public void run() {
+        logger.info(String.format("New task! solutionId = %s", this.judgeTask.getSolutionId()));
+        SolutionResult finalResult = runJudgeTask(this.judgeTask);
+        logger.info(String.format("Judge done, solutionId = %s, final result is %s", finalResult.getSolutionId(), finalResult.getResult()));
+
         if (ResultSubmitter.submitSolutionResult(finalResult)) {
             logger.info("SolutionResult submitted.");
         } else {
             logger.error("SolutionResult submit failed.");
         }
-    }
-
-    @Override
-    public void run() {
-        runJudgeTask(this.judgeTask);
     }
 }

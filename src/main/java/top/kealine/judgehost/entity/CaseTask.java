@@ -8,8 +8,9 @@ public class CaseTask {
     private int timeLimit;
     private int memoryLimit;
     private int lang;
+    private boolean isSpj;
 
-    public CaseTask(long solutionId, int testcaseId, String code, int problemId, int timeLimit, int memoryLimit, int lang) {
+    public CaseTask(long solutionId, int testcaseId, String code, int problemId, int timeLimit, int memoryLimit, int lang, boolean isSpj) {
         this.solutionId = solutionId;
         this.testcaseId = testcaseId;
         this.code = code;
@@ -17,6 +18,7 @@ public class CaseTask {
         this.timeLimit = timeLimit;
         this.memoryLimit = memoryLimit;
         this.lang = lang;
+        this.isSpj = isSpj;
     }
 
     public long getSolutionId() {
@@ -73,5 +75,13 @@ public class CaseTask {
 
     public void setLang(int lang) {
         this.lang = lang;
+    }
+
+    public boolean isSpj() {
+        return isSpj;
+    }
+
+    public void setSpj(boolean spj) {
+        isSpj = spj;
     }
 }
