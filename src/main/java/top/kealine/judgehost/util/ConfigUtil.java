@@ -18,11 +18,20 @@ public class ConfigUtil {
         }
     }
 
+    private static String toEvnName(String key) {
+        return key.toUpperCase().replaceAll("\\.", "_");
+    }
+
+    public static String getFromEvn(String key) {
+        return System.getenv(toEvnName(key));
+    }
+
     public static String get(String key){
-        return PROPERTIES.getProperty(key).trim();
+        return get(key, null);
     }
 
     public static String get(String key,String defaultValue){
-        return PROPERTIES.getProperty(key, defaultValue);
+        String value = getFromEvn(key);
+        return value == null ? PROPERTIES.getProperty(key, defaultValue) : value;
     }
 }
