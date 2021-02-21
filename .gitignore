@@ -1,3 +1,6 @@
 # Project exclude paths
 /target/
 /src/main/resources/judgehost.properties
+/out/
+/docker/judgehost/*.jar
+/docker/ubuntu-dev/*.tar.gz
