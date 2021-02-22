@@ -10,23 +10,26 @@ import java.io.InputStreamReader;
 
 public class CaseResult {
     private long solutionId;
+    private int testcaseId;
     private int result;
     private int memoryUsed;
     private int timeUsed;
     private String remark;
 
     public CaseResult() {}
-    public CaseResult(long solutionId, int result, int memoryUsed, int timeUsed, String remark) {
+    public CaseResult(long solutionId, int testcaseId, int result, int memoryUsed, int timeUsed, String remark) {
         this.solutionId = solutionId;
         this.result = result;
         this.memoryUsed = memoryUsed;
         this.timeUsed = timeUsed;
         this.remark = remark;
+        this.testcaseId = testcaseId;
     }
 
-    public static CaseResult getCaseResult(long solutionId){
+    public static CaseResult getCaseResult(long solutionId, int testcaseId){
         CaseResult result = new CaseResult();
         result.setSolutionId(solutionId);
+        result.setTestcaseId(testcaseId);
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(Config.JUDGEHOST_TEST_DIR + "judge/result.txt")));
@@ -57,9 +60,10 @@ public class CaseResult {
         }
     }
 
-    public static CaseResult getSystemErrorInstance(long solutionId) {
+    public static CaseResult getSystemErrorInstance(long solutionId, int testcaseId) {
         return new CaseResult(
                 solutionId,
+                testcaseId,
                 JudgeResult.SYSTEM_ERROR,
                 0,
                 0,
@@ -105,5 +109,13 @@ public class CaseResult {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public int getTestcaseId() {
+        return testcaseId;
+    }
+
+    public void setTestcaseId(int testcaseId) {
+        this.testcaseId = testcaseId;
     }
 }

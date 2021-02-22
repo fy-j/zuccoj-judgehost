@@ -111,7 +111,7 @@ public class MainJudger implements Runnable {
             Process pro = pb.start();
             int exitVal = pro.waitFor();
             logger.info(String.format("Core exited, exit code = %s", exitVal));
-            return CaseResult.getCaseResult(task.getSolutionId());
+            return CaseResult.getCaseResult(task.getSolutionId(), task.getTestcaseId());
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Core throw an Exception");
@@ -126,7 +126,7 @@ public class MainJudger implements Runnable {
             return judge(task);
         } catch (Exception e) {
             e.printStackTrace();
-            return CaseResult.getSystemErrorInstance(task.getSolutionId());
+            return CaseResult.getSystemErrorInstance(task.getSolutionId(), task.getTestcaseId());
         }
     }
 

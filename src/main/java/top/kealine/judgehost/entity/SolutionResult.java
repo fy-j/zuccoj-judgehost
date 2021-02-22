@@ -1,8 +1,12 @@
 package top.kealine.judgehost.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import top.kealine.judgehost.config.Config;
 import top.kealine.judgehost.constant.JudgeResult;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,37 +16,42 @@ public class SolutionResult {
     private int memoryUsed;
     private int timeUsed;
     private String remark;
+    private List<Integer> passTestcase;
 
     public SolutionResult() {}
-    public SolutionResult(long solutionId, int result, int memoryUsed, int timeUsed, String remark) {
+    public SolutionResult(long solutionId, int result, int memoryUsed, int timeUsed, String remark, List<Integer> passTestcase) {
         this.solutionId = solutionId;
         this.result = result;
         this.memoryUsed = memoryUsed;
         this.timeUsed = timeUsed;
-        this.remark = remark.trim();
+        this.remark = remark.trim().replaceAll(Config.JUDGEHOST_TEST_DIR, "");
+        this.passTestcase = passTestcase == null ? ImmutableList.of() : passTestcase;
     }
 
     public static SolutionResult of(List<CaseResult> results) {
         if (results == null || results.isEmpty()) {
             return null;
         }
-        int finalResult = JudgeResult.AC;
+        CaseResult finalResult = null;
         int maxMemoryUsed = -1;
         int maxTimeUsed = -1;
+        List<Integer> passTestcase = new LinkedList<>();
         for(CaseResult result: results) {
             maxMemoryUsed = Math.max(maxMemoryUsed, result.getMemoryUsed());
             maxTimeUsed = Math.max(maxTimeUsed, result.getTimeUsed());
-            if (result.getResult() != JudgeResult.AC) {
-                finalResult = result.getResult();
-                break;
+            if (result.getResult() == JudgeResult.AC) {
+                passTestcase.add(result.getTestcaseId());
+            } else if (finalResult == null){
+                finalResult = result;
             }
         }
         return new SolutionResult(
                 results.get(0).getSolutionId(),
-                finalResult,
+                finalResult == null ? JudgeResult.AC :finalResult.getResult(),
                 maxMemoryUsed,
                 maxTimeUsed,
-                results.get(0).getRemark()
+                finalResult == null ? "" :finalResult.getRemark(),
+                passTestcase
         );
     }
 
@@ -53,7 +62,8 @@ public class SolutionResult {
                 JudgeResult.COMPILE_ERROR,
                 0,
                 0,
-                compileResult.getCompilerOutput()
+                compileResult.getCompilerOutput(),
+                null
         );
     }
 
@@ -67,7 +77,8 @@ public class SolutionResult {
                 JudgeResult.SYSTEM_ERROR,
                 0,
                 0,
-                msg
+                msg,
+                null
         );
     }
 
@@ -78,6 +89,7 @@ public class SolutionResult {
                 .put("memoryUsed", memoryUsed)
                 .put("timeUsed", timeUsed)
                 .put("remark", remark)
+                .put("passTestcase", JSON.toJSON(passTestcase))
                 .build();
     }
 
