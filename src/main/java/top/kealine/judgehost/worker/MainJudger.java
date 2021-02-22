@@ -213,7 +213,7 @@ public class MainJudger implements Runnable {
                 .stream()
                 .map(MainJudger::runCaseTask)
                 .collect(Collectors.toList());
-        return SolutionResult.of(results);
+        return SolutionResult.of(judgeTask.getSolutionId(), results);
     }
 
     @Override

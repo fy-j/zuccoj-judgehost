@@ -28,9 +28,9 @@ public class SolutionResult {
         this.passTestcase = passTestcase == null ? ImmutableList.of() : passTestcase;
     }
 
-    public static SolutionResult of(List<CaseResult> results) {
+    public static SolutionResult of(long solutionId, List<CaseResult> results) {
         if (results == null || results.isEmpty()) {
-            return null;
+            return getSystemErrorInstance(solutionId, "TESTCASE IS EMPTY");
         }
         CaseResult finalResult = null;
         int maxMemoryUsed = -1;
@@ -46,7 +46,7 @@ public class SolutionResult {
             }
         }
         return new SolutionResult(
-                results.get(0).getSolutionId(),
+                solutionId,
                 finalResult == null ? JudgeResult.AC :finalResult.getResult(),
                 maxMemoryUsed,
                 maxTimeUsed,
