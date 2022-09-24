@@ -10,4 +10,5 @@ COPY ./judgehost_run.sh /root/judgehost/
 RUN chmod u+x /root/judgehost/judgehost_run.sh
 COPY ./Compiler /root/judgehost/core/
 COPY ./Core /root/judgehost/core/
+COPY ./testlib.h /usr/include/
 CMD ["/bin/bash", "/root/judgehost/judgehost_run.sh"]

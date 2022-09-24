@@ -35,6 +35,10 @@ public class JudgehostInitializer {
         Config.JUDGEHOST_TEST_DIR = Config.JUDGEHOST_ROOT + "test/";
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public static void loadLocalTestcase() throws Exception {
         logger.info("Loading local testcase...");
 
@@ -54,7 +58,7 @@ public class JudgehostInitializer {
     }
 
     public static void login() throws Exception {
-        logger.info("Begin to Login...");
+        logger.info("Begin to Login... connect to"+Config.SEVER_HOST);
         Response response = HttpUtil.post("/login", ImmutableMap.of(
                 "username", Config.JUDGEHOST_USERNAME,
                 "password", Config.JUDGEHOST_PASSWORD

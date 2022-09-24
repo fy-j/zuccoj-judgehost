@@ -41,6 +41,11 @@ public class MainJudger implements Runnable {
         logger.info("Cleaning work done.");
     }
 
+    /**
+     *
+     * @param target 存放编译器的目标文件
+     * @throws IOException
+     */
     private static void copyCompiler(File target) throws IOException {
         logger.info(String.format("Copy Compiler to %s", target.getPath()));
 
@@ -48,6 +53,7 @@ public class MainJudger implements Runnable {
             return;
         }
         File compiler = new File(Config.JUDGEHOST_CORE_DIR + "Compiler");
+        //将编译器的代码复制到目标文件
         Files.copy(compiler.toPath(), target.toPath());
     }
 
@@ -58,6 +64,13 @@ public class MainJudger implements Runnable {
         Files.copy(core.toPath(), target.toPath());
     }
 
+    /**
+     * 将docker容器中的judge/Core目录下的核心复制到/judge目录下
+     * 将用户的代码复制到judge/Main下
+     * @param lang
+     * @param isSpj
+     * @throws IOException
+     */
     private static void prepareEnv(int lang, boolean isSpj) throws IOException {
         logger.info("Begin to prepare env.");
         File judgeDir = new File(Config.JUDGEHOST_TEST_DIR + "judge");
@@ -119,6 +132,12 @@ public class MainJudger implements Runnable {
         }
     }
 
+    /**
+     * 对于该题的每个测试点，运行一遍
+     * prepareEnv 准备环境
+     * @param task 测试点
+     * @return
+     */
     private static CaseResult runCaseTask(CaseTask task) {
         try {
             prepareEnv(task.getLang(), task.isSpj());
@@ -130,18 +149,37 @@ public class MainJudger implements Runnable {
         }
     }
 
+    /**
+     * 将code保存到服务器本地
+     * @param code  表示提交的代码
+     * @param lang  提交的语言
+     */
     private static void releaseCode(String code, int lang) {
         logger.info("Release code...");
 
         FileUtil.save(Config.JUDGEHOST_TEST_DIR + "Main" + SupportedLanguage.getLangSuffix(lang), code);
     }
 
+    /**
+     * releaseCode()方法将提交的代码保存到本地Main.cpp
+     * copyCompiler()方法将编译器复制到test_dir目录下
+     * 调用ProcessBuilder开启进程编译Main.cpp
+     * getCompileResult() 方法
+     * @param testRoot
+     * @param code
+     * @param lang
+     * @return
+     */
     public static CompileResult compileCode(File testRoot, String code, int lang) {
         releaseCode(code, lang);
         try {
             copyCompiler(new File(Config.JUDGEHOST_TEST_DIR + "Compiler"));
 
             logger.info("Begin to compile...");
+
+            logger.info("run the command "+Config.JUDGEHOST_TEST_DIR + "Compiler" +
+                    "-c" + Config.JUDGEHOST_TEST_DIR + "Main" + SupportedLanguage.getLangSuffix(lang)+
+                    "-d" + Config.JUDGEHOST_TEST_DIR);
 
             ProcessBuilder pb = new ProcessBuilder(
                     Config.JUDGEHOST_TEST_DIR + "Compiler",
@@ -160,6 +198,12 @@ public class MainJudger implements Runnable {
         return CompileResult.getCompileResult();
     }
 
+    /**
+     * compileCode()方法获得编译结果
+     * @param testRoot
+     * @param code  spj代码
+     * @return
+     */
     public static boolean compileSpjCode(File testRoot, String code) {
         logger.info("Begin to compile spj code...");
         CompileResult compileResult = compileCode(testRoot, code, SupportedLanguage.CPP);
@@ -168,6 +212,14 @@ public class MainJudger implements Runnable {
         }
         File spj = new File(testRoot.getPath() + "/Main");
         File spjNewName = new File(testRoot.getPath() + "/SpecialJudge");
+        /**
+         * File old = new File(source);
+         * File rname = new File(dest);
+         * source不管是代表一个目录，还是一个文件的路径都必须是在磁盘上存在的
+         * dest则恰恰相反，代表一个不存在的目录或文件路径
+         * 可以利用上述操作实现文件的移动（注意，不是复制）。将source中的文件移动至dest目录下，
+         * 也可以改变文件的类型，执行完renameTo操作后，原有位置的文件不存在，被移动至dest处，且被更改为dest中抽象文件的名字和类型。
+         */
         return spj.renameTo(spjNewName);
     }
 
@@ -207,7 +259,7 @@ public class MainJudger implements Runnable {
 
         logger.info("Compile Successfully, begin to judge.");
 
-        // Judge
+        // Judge，获取任务中的样例
         List<CaseTask> tasks = judgeTask.toCaseTask();
         List<CaseResult> results = tasks
                 .stream()
@@ -216,6 +268,9 @@ public class MainJudger implements Runnable {
         return SolutionResult.of(judgeTask.getSolutionId(), results);
     }
 
+    /**
+     * 线程启动
+     */
     @Override
     public void run() {
         logger.info(String.format("New task! solutionId = %s", this.judgeTask.getSolutionId()));

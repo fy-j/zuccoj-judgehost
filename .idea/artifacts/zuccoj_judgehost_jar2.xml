@@ -1,0 +1,27 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="zuccoj-judgehost:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/zuccoj_judgehost_jar2</output-path>
+    <root id="archive" name="zuccoj-judgehost.jar">
+      <element id="module-output" name="zuccoj-judgehost" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/jetbrains/annotations/13.0/annotations-13.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/guava/guava/30.1-jre/guava-30.1-jre.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/apache/commons/commons-pool2/2.6.2/commons-pool2-2.6.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/checkerframework/checker-qual/3.5.0/checker-qual-3.5.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/google/errorprone/error_prone_annotations/2.3.4/error_prone_annotations-2.3.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/redis/clients/jedis/3.4.1/jedis-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/alibaba/fastjson/1.2.75/fastjson-1.2.75.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/jetbrains/kotlin/kotlin-stdlib/1.4.10/kotlin-stdlib-1.4.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/log4j/log4j/1.2.17/log4j-1.2.17.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/squareup/okio/okio/2.9.0/okio-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.10/kotlin-stdlib-common-1.4.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/com/squareup/okhttp3/okhttp/4.10.0-RC1/okhttp-4.10.0-RC1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../apache-maven-3.8.5/LocalWarehouse/commons-codec/commons-codec/1.15/commons-codec-1.15.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
