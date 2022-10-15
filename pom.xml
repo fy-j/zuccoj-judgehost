@@ -84,7 +84,7 @@
 
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <mainClass>xxx.xxx.xxx.xxx</mainClass>
+                    <mainClass>top.kealine.judgehost.JudgehostStarter</mainClass>
                 </configuration>
             </plugin>
         </plugins>
