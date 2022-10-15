@@ -58,6 +58,18 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
 <!--        <plugins>-->
 <!--            <plugin>-->
 <!--                &lt;!&ndash; 指定项目编译时的java版本和编码方式 &ndash;&gt;-->
