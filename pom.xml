@@ -70,49 +70,46 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>repackage</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-
-<!--                <configuration>-->
-<!--                    <includeSystemScope>true</includeSystemScope>-->
-<!--                    <mainClass>top.kealine.judgehost.JudgehostStarter</mainClass>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
         <plugins>
             <plugin>
-                <!--         打包为jar，goal为package -->
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <archive>
                         <manifest>
                             <mainClass>top.kealine.judgehost.JudgehostStarter</mainClass>
+                            添加以下2项配置，可以使得导出的可执行jar中MANIFEST.MF文件带有“Class-Path”这一项
+                            <addClasspath>true</addClasspath><!-- true会在MANIFEST.MF加上Class-Path项并配置依赖包 -->
+                            <classpathPrefix>lib/</classpathPrefix><!-- lib/指定依赖包所在目录 -->
                         </manifest>
                     </archive>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>assembly</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+<!--            <plugin>-->
+<!--                &lt;!&ndash;         打包为jar，goal为package &ndash;&gt;-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <appendAssemblyId>false</appendAssemblyId>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>top.kealine.judgehost.JudgehostStarter</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>make-assembly</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>assembly</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
