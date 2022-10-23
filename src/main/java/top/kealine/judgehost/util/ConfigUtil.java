@@ -1,5 +1,9 @@
 package top.kealine.judgehost.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import top.kealine.judgehost.JudgehostStarter;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -7,11 +11,14 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class ConfigUtil {
+
+    private static final Log logger = LogFactory.getLog(ConfigUtil.class);
     private final static String FILE = "judgehost.properties";
     private final static Properties PROPERTIES = new Properties();
 
     static{
         try {
+            logger.info(ClassLoader.getSystemResourceAsStream(FILE));
             PROPERTIES.load(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(FILE)), StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
